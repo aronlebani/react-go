@@ -1,0 +1,37 @@
+.Stone {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1.5rem;
+}
+
+.Stone.--colour-none {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: black;
+}
+
+.Stone.--colour-black {
+    background-color: black;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.Stone.--colour-white {
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.Square {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 27rem;
+    height: 27rem;
+}
