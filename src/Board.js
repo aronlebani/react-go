@@ -2,22 +2,22 @@ import { useState } from "react";
 
 import "./Board.css";
 
-import { BOARD_SIZE, useGo } from "./go/state";
-
-import { getArray } from "./utils";
+import { PLAYER_COLOUR, useGo } from "./go/state";
 
 function Stone(props) {
   const { colour } = props;
 
-  return (
-    <div className={`Stone ${colour.className}`}></div>
-  );
-};
+  return <div className={`Stone ${colour.className}`}></div>;
+}
 
 function Square(props) {
-  const { getColour, onClick } = props;
+  const { colour, onClick } = props;
 
   const [isHover, setIsHover] = useState(false);
+
+  const squareColour = isHover
+    ? PLAYER_COLOUR
+    : colour;
 
   return (
     <div
@@ -26,28 +26,29 @@ function Square(props) {
       onMouseLeave={() => setIsHover(false)}
       onClick={onClick}
     >
-      <Stone colour={getColour(isHover)} />
+      <Stone colour={squareColour} />
     </div>
   );
-};
+}
 
 function Board() {
-  const [getColourAt, click] = useGo();
+  const [board, click] = useGo();
 
   return (
     <div className="Board">
-      {getArray(BOARD_SIZE).map(i =>
-        getArray(BOARD_SIZE).map(j =>
-          <Square
-            key={`${i}-${j}`}
-            getColour={isHover => getColourAt(i, j, isHover)}
-            onClick={() => click(i, j)}
-          />
-        )
-      )
-      .flat()}
+      {board.map((row, i) => (
+        <div key={`${i}`}>
+          {row.map((col, j) => (
+            <Square
+              key={`${i}-${j}-${col.value}`}
+              colour={col}
+              onClick={() => click(i, j)}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
-};
+}
 
 export default Board;
