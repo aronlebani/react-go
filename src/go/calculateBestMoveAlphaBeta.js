@@ -1,7 +1,7 @@
 import { evaluateBoard } from "./boardStateEvaluation";
 import { isFieldSurroundedByJustOneColor, isGameFinished, checkFinalPoints } from "./boardFinishEvaluation";
-import { colors } from "./boardConsts";
 import { checkCurrentPoints, isFieldSurroundedByNothing } from "./boardCurrentEvaluation";
+import { colours } from "./state";
 
 /**
  * Returns object with outcome, x and y where player should set stone 
@@ -139,8 +139,8 @@ const calculateMoveMaxOutcome = (currValues, playerColor, y, x, boardSize, depth
      * Calculate final points at which the game will stopped
      */
     const [whitePoints, blackPoints] = checkFinalPoints(newValues, boardSize)
-    const currentPoints = playerColor === colors.WHITE ? whitePoints : blackPoints;
-    const opponentPoints = playerColor === colors.WHITE ? blackPoints : whitePoints;
+    const currentPoints = playerColor === colours.WHITE.value ? whitePoints : blackPoints;
+    const opponentPoints = playerColor === colours.WHITE.value ? blackPoints : whitePoints;
     const points = evaluatePoints(currentPoints, opponentPoints);
     
     return {outcome: points, y: y, x: x}
@@ -152,8 +152,8 @@ const calculateMoveMaxOutcome = (currValues, playerColor, y, x, boardSize, depth
      * Check points in current game tree state, i.e. this time when game is not yet in end state, but depth of calculations is reached
      */
     const [whitePoints, blackPoints] = checkCurrentPoints(newValues, boardSize)
-    const currentPoints = playerColor === colors.WHITE ? whitePoints : blackPoints;
-    const opponentPoints = playerColor === colors.WHITE ? blackPoints : whitePoints;
+    const currentPoints = playerColor === colours.WHITE.value ? whitePoints : blackPoints;
+    const opponentPoints = playerColor === colours.WHITE.value ? blackPoints : whitePoints;
     const points = evaluatePoints(currentPoints, opponentPoints);
 
     return {outcome: points, y: y, x: x}
@@ -162,12 +162,12 @@ const calculateMoveMaxOutcome = (currValues, playerColor, y, x, boardSize, depth
   // Use this evaluated new board and calculate another set of move max outcomes for opponent, then take min from that set of opponent's outcomes 
   if (isEvenIteration(depthIteration)) {
     const newDepthIteration = depthIteration - 1;
-    const opponentColor = playerColor === colors.WHITE ? colors.BLACK : colors.WHITE
+    const opponentColor = playerColor === colours.WHITE.vlaue ? colours.BLACK.value : colours.WHITE.value
     const calculatedNextMove = calculateWorstCountermove(newValues, opponentColor, boardSize, newDepthIteration, alpha, beta)
     return {outcome: calculatedNextMove.outcome, y: y, x: x}
   } else {
     const newDepthIteration = depthIteration - 1;
-    const currentColor = playerColor === colors.WHITE ? colors.BLACK : colors.WHITE
+    const currentColor = playerColor === colours.WHITE.value ? colours.BLACK.value : colours.WHITE.value
     const calculatedNextMove = calculateBestMove(newValues, currentColor, boardSize, newDepthIteration, alpha, beta);
     return {outcome: calculatedNextMove.outcome, y: y, x: x}
   }

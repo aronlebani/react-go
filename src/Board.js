@@ -2,11 +2,9 @@ import { useState } from "react";
 
 import "./Board.css";
 
-import { useGo } from "./hooks";
+import { BOARD_SIZE, useGo } from "./go/state";
 
 import { getArray } from "./utils";
-
-const BOARD_SIZE = 9;
 
 function Stone(props) {
   const { colour } = props;
@@ -17,7 +15,7 @@ function Stone(props) {
 };
 
 function Square(props) {
-  const { getColour, setColour } = props;
+  const { getColour, onClick } = props;
 
   const [isHover, setIsHover] = useState(false);
 
@@ -26,7 +24,7 @@ function Square(props) {
       className="Square"
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      onClick={() => setColour()}
+      onClick={onClick}
     >
       <Stone colour={getColour(isHover)} />
     </div>
@@ -34,7 +32,7 @@ function Square(props) {
 };
 
 function Board() {
-  const [getColourAt, setColourAt] = useGo(BOARD_SIZE);
+  const [getColourAt, click] = useGo();
 
   return (
     <div className="Board">
@@ -43,7 +41,7 @@ function Board() {
           <Square
             key={`${i}-${j}`}
             getColour={isHover => getColourAt(i, j, isHover)}
-            setColour={() => setColourAt(i, j)}
+            onClick={() => click(i, j)}
           />
         )
       )

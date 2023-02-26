@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { direction } from "./boardConsts";
+import { direction } from "./state";
 
 export const evaluateBoard = (newValues, boardSize) => {
   let valuesWereChanged = false;
