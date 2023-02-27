@@ -36,92 +36,70 @@ export const direction = {
   LEFT: 4,
 };
 
-export const CALCULATION_DEPTH = 2; // 1, 2, or 3
+export const CALCULATION_DEPTH = 1; // 1, 2, or 3
 export const ALGORITHM_TYPE = algorithmTypes.MIN_MAX;
 export const BOARD_SIZE = 9; // 5, 9, 11, 13, 17, or 19
 export const PLAYER_COLOUR = colours.WHITE;
 export const COMPUTER_COLOUR = colours.BLACK;
 
-export const useGo = () => {
+export const useGo = (onFinishGame) => {
   const initialBoard = getArray(BOARD_SIZE).map((i) =>
     getArray(BOARD_SIZE).map((j) => colours.NONE)
   );
 
   const [board, setBoard] = useState(initialBoard);
 
-  const boardToValues = (board) => {
-    return board.map((x) => x.map((y) => y.value));
+  const boardToValues = (b) => {
+    return b.map((x) => x.map((y) => y.value));
   };
 
   const valuesToBoard = (values) => {
-    return values.map((x) => x.map((y) => colours.find(c => c.value === y)));
+    const ret = values.map((row, i) =>
+      row.map((col, j) => Object.values(colours).find((c) => c.value === col))
+    );
+    return ret;
   };
 
   const click = (i, j) => {
-    placeStoneAndEvaluate(PLAYER_COLOUR, i, j);
+    const b = board.map((row, i) => row.map((col, j) => col));
 
-    if (isGameFinished(boardToValues(board), BOARD_SIZE)) {
-      console.log("GAME FINISHED");
-      const [whitePoints, blackPoints] = checkFinalPoints(
-        boardToValues(board),
-        BOARD_SIZE
-      );
-      console.log(`white points: ${whitePoints}, black points: ${blackPoints}`);
-      onFinishGame(whitePoints, blackPoints);
+    const playerBoard = playTurn(b, PLAYER_COLOUR, i, j);
+    setBoard(playerBoard);
 
-      return;
-    }
+    const { _, y, x } = calculateMoveWithAlgorithm(playerBoard, COMPUTER_COLOUR);
 
-    const { outcome, y, x } = calculateMoveWithAlgorithm(board, COMPUTER_COLOUR);
+    const computerBoard = playTurn(playerBoard, COMPUTER_COLOUR, y, x);
+    setBoard(computerBoard);
+  };
 
-    console.log(`calculateMinMaxMove - outcome:${outcome} y:${y} x:${x}`);
+  const playTurn = (b, colour, i, j) => {
+    const updatedBoard = placeStoneAndEvaluate(b, colour, i, j);
 
-    placeStoneAndEvaluate(COMPUTER_COLOUR, y, x);
-
-    if (isGameFinished(boardToValues(board), BOARD_SIZE)) {
-      console.log("GAME FINISHED");
-      const [whitePoints, blackPoints] = checkFinalPoints(
-        boardToValues(board),
-        BOARD_SIZE
-      );
-      console.log(`white points: ${whitePoints}, black points: ${blackPoints}`);
+    if (isGameFinished(boardToValues(updatedBoard), BOARD_SIZE)) {
+      const [whitePoints, blackPoints] = checkFinalPoints(boardToValues(updatedBoard), BOARD_SIZE);
       onFinishGame(whitePoints, blackPoints);
     }
+
+    return updatedBoard;
   };
 
-  const placeStone = (colour, i, j) => {
-    let newBoard = board;
+  const placeStoneAndEvaluate = (b, colour, x, y) => {
+    const newBoard = b.map((row, i) => row.map((col, j) => (i === x && j === y ? colour : col)));
 
-    newBoard[i][j] = colour;
+    const [currentValuesChanged, evaluatedValues] = evaluateBoard(
+      boardToValues(newBoard),
+      BOARD_SIZE
+    );
 
-    setBoard(newBoard);
+    return currentValuesChanged ? valuesToBoard(evaluatedValues) : newBoard;
   };
 
-  const placeStoneAndEvaluate = (colour, i, j) => {
-    placeStone(colour, i, j);
-
-    const [currentValuesChanged, evaluatedValues] = evaluateBoard(boardToValues(board), BOARD_SIZE);
-
-    if (currentValuesChanged) {
-      setBoard(valuesToBoard(evaluatedValues));
-    }
-  };
-
-  const onFinishGame = (whitePoints, blackPoints) => {
-    // TODO
-  };
-
-  const calculateMoveWithAlgorithm = (valuesToCalculate, colour) => {
+  const calculateMoveWithAlgorithm = (b, colour) => {
     if (ALGORITHM_TYPE === algorithmTypes.MIN_MAX) {
-      return calculateMinMaxMove(
-        boardToValues(valuesToCalculate),
-        colour.value,
-        BOARD_SIZE,
-        CALCULATION_DEPTH
-      );
+      return calculateMinMaxMove(boardToValues(b), colour.value, BOARD_SIZE, CALCULATION_DEPTH);
     } else {
       return calculateMinMaxAlphaBetaPrunedMove(
-        boardToValues(valuesToCalculate),
+        boardToValues(b),
         colour.value,
         BOARD_SIZE,
         CALCULATION_DEPTH

@@ -32,12 +32,13 @@ function Square(props) {
 }
 
 function Board() {
-  const [board, click] = useGo();
+  const onFinish = (white, black) => console.log(`Finish - white: ${white}, black: ${black}`);
+  const [board, click] = useGo(onFinish);
 
   return (
     <div className="Board">
       {board.map((row, i) => (
-        <div key={`${i}`}>
+        <>
           {row.map((col, j) => (
             <Square
               key={`${i}-${j}-${col.value}`}
@@ -45,7 +46,7 @@ function Board() {
               onClick={() => click(i, j)}
             />
           ))}
-        </div>
+        </>
       ))}
     </div>
   );
