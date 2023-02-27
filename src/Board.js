@@ -43,7 +43,7 @@ function Board() {
             <Square
               key={`${i}-${j}-${col.value}`}
               colour={col}
-              onClick={() => click(i, j)}
+              onClick={(e) => click(e, i, j)}
             />
           ))}
         </>

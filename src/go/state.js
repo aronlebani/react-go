@@ -54,16 +54,20 @@ export const useGo = (onFinishGame) => {
   };
 
   const valuesToBoard = (values) => {
-    const ret = values.map((row, i) =>
+    return values.map((row, i) =>
       row.map((col, j) => Object.values(colours).find((c) => c.value === col))
     );
-    return ret;
   };
 
-  const click = (i, j) => {
+  const click = (e, i, j) => {
     const b = board.map((row, i) => row.map((col, j) => col));
 
+    if (b[i][j].value !== colours.NONE.value) {
+      return;
+    }
+
     const playerBoard = playTurn(b, PLAYER_COLOUR, i, j);
+
     setBoard(playerBoard);
 
     const { _, y, x } = calculateMoveWithAlgorithm(playerBoard, COMPUTER_COLOUR);
