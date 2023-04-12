@@ -1,0 +1,22 @@
+.Stone {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: black;
+}
+
+.--colour-black {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 3rem;
+    background-color: black;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.--colour-white {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 3rem;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
